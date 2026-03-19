@@ -1,0 +1,4 @@
+- [Research Profile](user_research_profile.md) — User's DL/ML research background and workspace location
+- [Research Workflow System](project_research_workflow.md) — D:\research\ workspace setup and planned paper web app
+- [决策问题语言偏好](feedback_language.md) — 向用户提问决策时必须使用中文
+- [开发经验教训](feedback_dev_lessons.md) — Python兼容性/API验证/Windows进程管理/翻译选型/DB迁移顺序
