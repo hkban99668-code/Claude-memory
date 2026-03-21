@@ -2,3 +2,4 @@
 - [Research Workflow System](project_research_workflow.md) — D:\research\ workspace setup and planned paper web app
 - [决策问题语言偏好](feedback_language.md) — 向用户提问决策时必须使用中文
 - [开发经验教训](feedback_dev_lessons.md) — Python兼容性/API验证/Windows进程管理/翻译选型/DB迁移顺序
+- [异步决策机制](feedback_decision_mechanism.md) — 三色分级：绿色直接做/黄色做完汇报/红色停下等确认
