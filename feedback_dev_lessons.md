@@ -41,6 +41,26 @@ type: feedback
 **Why:** Flask dev server 对 templates/ 变更需要重新加载进程才能生效（static/ 文件则浏览器刷新即可）。
 **How to apply:** 修改 HTML 模板后必须重启服务；修改 CSS/JS 只需刷新浏览器。
 
+**11. Flask webapp 开机自启：用 VBS + 任务计划程序**
+**Why:** Flask 开发服务器是手动进程，重启电脑后服务停止，需要手动启动才能访问。
+**How to apply:** 创建 `start_bg.bat`（无 pause，输出重定向到 server.log）和 `start_hidden.vbs`（用 WScript.Shell 隐藏窗口启动 bat），然后以管理员身份运行 `schtasks /create /tn "ResearchWebapp" /tr "wscript D:\research\webapp\start_hidden.vbs" /sc onlogon /f` 注册登录自启任务。schtasks 必须在管理员权限下运行，bash 里直接调用会失败。
+
+**12. venue 字段必须独立存储，不能混入 keywords**
+**Why:** 2026-03-23 发现 venue 混入 keywords 后影响关键词提取质量，且前端无法区分 venue 和研究关键词。
+**How to apply:** papers 表加独立 `venue TEXT` 列；fetcher 返回 dict 里 venue 单独字段；DB migration 加到 `_migrate()` 里。
+
+**13. HF Daily Papers 无法保证 venue 级别，应禁用**
+**Why:** HF Papers 只有关键词过滤，没有 venue 字段，无法确认 CCF-A / Nature 级别。
+**How to apply:** 若有严格 venue 要求，直接让 `pwc_fetcher.fetch()` 返回 `[]`；arXiv + S2 两路足够覆盖。
+
+**14. 前端已读隐藏：从本地数组删除后立即 renderPapers()**
+**Why:** 关抽屉时才刷新会有延迟感；打开抽屉时删掉 allPapers 中对应项再 render，用户关闭抽屉时列表已是最新状态，无闪烁。
+**How to apply:** `openDrawer` 中标记已读后：`if (!p.is_starred && currentFilter === "feed=1") { allPapers = allPapers.filter(ap => ap.id !== id); renderPapers(); }`。
+
+**15. 收藏按钮要在卡片和抽屉详情页各放一个，状态需双向同步**
+**Why:** 用户在详情页操作收藏后，卡片上的星星图标也要更新，否则状态不一致。
+**How to apply:** `toggleStarInDrawer` 里同时更新 `#drawer-star-btn` 和 `.card-star[data-id]` 两处 DOM。
+
 **10. 全局 CSS .hidden 规则缺失导致双视图同时显示**
 **Why:** view-papers 和 view-trending 用 JS 的 classList.toggle("hidden") 切换，但 CSS 里没有全局 .hidden { display: none } 规则，导致两个视图同时显示，页面只有一半。
 **How to apply:** 使用 hidden class 切换显示时，必须在 CSS 里有对应规则。统一加 `.hidden { display: none !important; }` 到全局 CSS。
