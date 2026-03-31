@@ -4,3 +4,4 @@
 - [开发经验教训](feedback_dev_lessons.md) — Python兼容性/API验证/Windows进程管理/翻译选型/DB迁移顺序
 - [异步决策机制](feedback_decision_mechanism.md) — 三色分级：绿色直接做/黄色做完汇报/红色停下等确认
 - [BiAttr-Mamba 研究学习进度](project_biattr_mamba_study.md) — 气候归因研究课题学习进度，含已读论文和已掌握概念
+- [阿尔兹海默症脑机接口项目](project_alzheimer_bci.md) — 与医学院合作的小鼠侵入式LFP/EEG分析项目，基于智能体的AD机制研究

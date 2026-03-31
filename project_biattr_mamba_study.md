@@ -17,26 +17,37 @@ type: project
 | 顺序 | 论文 | arXiv | 状态 |
 |------|------|-------|------|
 | 1 | AI for Extreme Events 综述 | 2406.20080 | 已完成 |
-| 2 | RS Foundation Models 综述 | 2603.00988 | 未读 |
-| 3 | Mamba | 2312.00752 | 未读 |
-| 4 | I-JEPA | 2301.08243 | 未读 |
+| 2 | RS Foundation Models 综述 | 2603.00988 | 已完成 |
+| 3 | Mamba | 2312.00752 | 已完成 |
+| 4 | I-JEPA | 2301.08243 | 已完成 |
 | 5 | GraphCast | 2212.12794 | 未读 |
 | 6 | ChangeMamba | 2404.03425 | 未读 |
 
+阅读笔记文件：D:\research\paper_reading_notes.md
+
 ## 已掌握概念（2026-03-30）
 
-**论文1（2406.20080）核心内容：**
-- Attribution（归因）：把观测变化拆分为"人为"和"自然"两部分，实现方式：最优指纹法（传统线性回归）→ CNN归因 → BiAttr-Mamba 潜空间做差
-- Counterfactual（反事实）：用 CMIP6-HistNat 构造"没有人类活动的平行地球"，归因信号 = f_obs - f_nat
-- UQ（不确定性量化）：偶然不确定性 vs 认知不确定性，实现：MC-Dropout / Deep Ensemble / Gaussian Head
-- XAI（可解释性）：SHAP、Grad-CAM、Integrated Gradients
+**论文1（2406.20080）：**
+- f_obs - f_nat：归因信号 = 观测潜向量 - 反事实潜向量，在潜空间做差而非像素空间
+- Counterfactual：CMIP6-HistNat 构造只含自然强迫的"平行地球"
+- UQ：偶然/认知不确定性，MC-Dropout / Deep Ensemble / Gaussian Head
+- XAI：SHAP、Grad-CAM、Integrated Gradients
 
-**CMIP6-HistNat 理解：**
-- CMIP6 是全球气候模型联合项目，HistNat 实验只含自然强迫（无人为排放）
-- 分辨率约 100km，仅作训练时的监督信号，不参与推理
-- BiAttr-Mamba 输入是高分辨率卫星数据（30m），CMIP6 是"方向指引"不是被超分的数据
+**论文2（2603.00988）：**
+- RS基础模型演化路线：单模态光学 → SAR → 多模态融合 → 时序 → VLM
+- DOFA 异构 tokenizer：动态权重生成器，根据传感器元信息生成投影矩阵
+- 预训练策略对比：对比学习 / MAE（学像素）/ I-JEPA（学语义），归因任务选 I-JEPA
+- 关键数据集：SSL4EO-S12、MMEarth、Prithvi 预训练数据
 
-**Mamba vs Transformer 理解：**
-- Transformer：O(N²)，存所有位置两两关系，序列长了显存爆炸
-- Mamba：O(N)，滚动隐状态 h，选择性门控决定记什么忘什么
-- 用户已理解：Mamba 省在"存状态"而非"存关系"，选择性保存是核心创新
+**论文4（2301.08243）I-JEPA：**
+- 三者分工：Target Encoder 出题（EMA慢更新）/ Context Encoder 答题（真正要用的）/ Predictor 翻译（训后丢弃）
+- 遮 Target Encoder 输出而非输入：保证学习目标 g 在完整上下文下生成，稳定可靠
+- EMA 防坍缩：momentum=0.996，为训练提供稳定但不断进步的学习目标
+- BiAttr-Mamba 双支路坍缩风险：obs/nat 共享 encoder 时需 EMA 机制防止 f_obs≈f_nat
+
+**论文3（2312.00752）Mamba：**
+- SSM：滚动隐状态 h，h_t = Ā·h_{t-1} + B̄·x_t，O(N) 线性复杂度
+- Δ（Delta）：控制写入/遗忘，大Δ=记住，小Δ=忽略，是选择性的核心
+- S6：让 B、C、Δ 变成输入 x 的函数，实现内容相关的选择性记忆
+- 硬件感知：Kernel Fusion，在 SRAM 内完成递推，比 Transformer 快 5 倍
+- BiAttr-Mamba 关联：Δ 的空间分布图可作为归因显著性地图（XAI落点）
